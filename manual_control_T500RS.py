@@ -452,7 +452,6 @@ class DualControl(object):
     def _parse_vehicle_wheel(self):
         numAxes = self._joystick.get_numaxes()
         jsInputs = [float(self._joystick.get_axis(i)) for i in range(numAxes)]
-        # print (jsInputs)
         jsButtons = [float(self._joystick.get_button(i)) for i in
                      range(self._joystick.get_numbuttons())]
 
@@ -462,21 +461,17 @@ class DualControl(object):
         K1 = 1.0  # 0.55
         steerCmd = K1 * math.tan(1.1 * jsInputs[self._steer_idx])
 
-        steerCmd = steerCmd * 0.2 #need calibraiting
-
         K2 = 1.6  # 1.6
 
-        #throttleCmd = K2 + (2.05 * math.log10(
-        #    -0.7 * jsInputs[self._throttle_idx] + 1.4) - 1.2) / 0.92
-        throttleCmd = jsButtons[self._throttle_idx]     #my T500RS's pedals operate as button.
+        throttleCmd = K2 + (2.05 * math.log10(
+            -0.7 * jsInputs[self._throttle_idx] + 1.4) - 1.2) / 0.92
         if throttleCmd <= 0:
             throttleCmd = 0
         elif throttleCmd > 1:
             throttleCmd = 1
 
-        #brakeCmd = 1.6 + (2.05 * math.log10(
-        #    -0.7 * jsInputs[self._brake_idx] + 1.4) - 1.2) / 0.92
-        brakeCmd = jsButtons[self._brake_idx]           #same problem. my pedals operate as button.
+        brakeCmd = 1.6 + (2.05 * math.log10(
+            -0.7 * jsInputs[self._brake_idx] + 1.4) - 1.2) / 0.92
         if brakeCmd <= 0:
             brakeCmd = 0
         elif brakeCmd > 1:
